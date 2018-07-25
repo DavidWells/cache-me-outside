@@ -3,10 +3,12 @@
   "version": "0.0.1",
   "description": "",
   "main": "lib/index.js",
-  "bin": {
-    "cache-me": "./cli.js",
-    "md-magic": "./cli.js"
-  },
+  "files": [
+    "lib",
+    "package.json",
+    "package-lock.json",
+    "README.md"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

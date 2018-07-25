@@ -6,6 +6,9 @@
 # testing
 /coverage
 cache
+other
+serverless-test
+two
 
 # production
 /build
