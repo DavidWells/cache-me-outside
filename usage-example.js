@@ -1,41 +1,45 @@
 const path = require('path')
-const cacheMagic = require('./lib')
+const cacheMeOutside = require('./lib')
 
-// const cacheDir = path.resolve('./opt/buildhome/cache')
+// Netlify cache folder
+const yourCustomNameSpace = 'storage'
+const netlifyCacheFolder = path.join('/opt/build/cache', yourCustomNameSpace)
+// const cacheDir = netlifyCacheFolder
 const cacheFolder = path.resolve('./cache')
 
-// Do it
-const options = {
-  // directorys or files to cache
-  // contents: path.join(__dirname, 'two'),
-  contents: [
-    {
-      path: path.join(__dirname, 'two/node_modules'),
-      // TODO finish Cache Invalidator
-      invalidateOn: path.join(__dirname, 'two/package.json'),
-      command: 'npm install'
-    },
-    {
-      path: path.join(__dirname, 'other/node_modules'),
-      invalidateOn: path.join(__dirname, 'other/package.json'),
-      command: 'npm install'
-    },
-    {
-      path: path.join(__dirname, 'serverless-test/.serverless'),
-      invalidateOn: 'serverless.yml',
-      command: 'echo "hi"'
-    }
-  ],
-  // cache folder destination
-  cacheFolder: cacheFolder,
+const contentsToCache = [
+  {
+    contents: path.join(__dirname, 'node_modules'),
+    handleCacheUpdate: 'npm install',
+    shouldCacheUpdate: async function(data, utils) {
+      const pkgChanged = await utils.diff(path.join(__dirname, 'package.json'))
+      const lolChanged = await utils.diff(path.join(__dirname, 'lol.json'))
 
-  ignoreIfFolderExists: false,
-  // TODO finish Cache Invalidator
-  invalidateOn: () => {
-    return ''
+      return pkgChanged || lolChanged
+    },
+  },
+  {
+    contents: path.join(__dirname, 'other/node_modules'),
+    shouldCacheUpdate: function() {
+      const nodeModulesDifferent = null
+      if (nodeModulesDifferent) {
+        return true
+      }
+      return false
+    },
+    invalidateOn: path.join(__dirname, 'other/package.json'),
+    command: 'npm install'
+  },
+  {
+    contents: path.join(__dirname, 'serverless-test/.serverless'),
+    shouldCacheUpdate: function() {
+      return false
+    },
+    invalidateOn: 'serverless.yml',
+    command: 'echo "hi"'
   }
-}
+]
 
-cacheMagic(options).then(() => {
+cacheMeOutside(contentsToCache, cacheFolder).then(() => {
   console.log('Success! You are ready to rock')
 })
