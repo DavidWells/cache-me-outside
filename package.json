@@ -1,7 +1,7 @@
 {
   "name": "cache-me-outside",
   "version": "0.0.8",
-  "description": "",
+  "description": "Caching tool for quicker builds in CI systems",
   "main": "lib/index.js",
   "files": [
     "lib",
@@ -11,7 +11,16 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docs": "md-magic --path '**/*.md' --ignore 'node_modules'"
+    "docs": "md-magic --path '**/*.md' --ignore 'node_modules'",
+    "publish": "git push origin && git push origin --tags",
+    "release:patch": "npm version patch && npm publish",
+    "release:minor": "npm version minor && npm publish",
+    "release:major": "npm version major && npm publish"
+  },
+  "homepage": "https://github.com/DavidWells/cache-me-outside#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DavidWells/cache-me-outside"
   },
   "author": "David Wells",
   "license": "MIT",
