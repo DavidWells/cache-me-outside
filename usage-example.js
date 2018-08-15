@@ -37,5 +37,8 @@ const contentsToCache = [
 ]
 
 cacheMeOutside(cacheDir, contentsToCache).then((cacheInfo) => {
-  console.log('Success! You are ready to rock', cacheInfo)
+  console.log('Success! You are ready to rock')
+  cacheInfo.forEach((info) => {
+    console.log(info.cacheDir)
+  })
 })
