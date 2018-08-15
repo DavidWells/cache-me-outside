@@ -22,19 +22,18 @@ const contentsToCache = [
   },
   {
     contents: path.join(__dirname, 'other/node_modules'),
-    handleCacheUpdate: 'npm install',
-    shouldCacheUpdate: (data) => {
-      // console.log('data', data)
+    shouldCacheUpdate: function() {
       return false
     },
+    handleCacheUpdate: 'yarn install'
   },
   {
     contents: path.join(__dirname, 'serverless-test/.serverless'),
-    shouldCacheUpdate: function() {
-      return true
-    },
-    handleCacheUpdate: 'echo "hi"'
-  }
+    handleCacheUpdate: () => {
+      console.log('run my custom stuff here')
+    }
+    // shouldCacheUpdate if omitted will use contents folder hash
+  },
 ]
 
 cacheMeOutside(cacheDir, contentsToCache).then((cacheInfo) => {
