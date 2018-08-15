@@ -1,8 +1,8 @@
 # Cache me outside
 
-Caching tool for quicker builds in CI systems
+<img align="right" width="335" height="188" src="https://user-images.githubusercontent.com/532272/44130059-87483502-a000-11e8-9987-2a62f88e4385.jpg">
 
-<img align="right" width="335" height="188" src="http://www.fillmurray.com/100/100">
+Caching tool for quicker builds in CI systems
 
 <!-- AUTO-GENERATED-CONTENT:START (TOC) -->
 - [Usage](#usage)
