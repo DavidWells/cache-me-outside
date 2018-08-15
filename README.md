@@ -2,7 +2,12 @@
 
 Caching tool for quicker builds in CI systems
 
-<img src="https://s3.amazonaws.com/gs-geo-images/c487142e-d324-41d6-a3e3-9906d70fc7df_l.jpg" />
+<img align="right" width="335" height="188" src="http://www.fillmurray.com/100/100">
+
+<!-- AUTO-GENERATED-CONTENT:START (TOC) -->
+- [Usage](#usage)
+- [How it works](#how-it-works)
+<!-- AUTO-GENERATED-CONTENT:END -->
 
 ## Usage
 
