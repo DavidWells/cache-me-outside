@@ -1,12 +1,8 @@
 const path = require('path')
 const cacheMeOutside = require('./lib') // require('cache-me-outside')
 
-/* local cache folder */
-const cacheDir = path.resolve('./cache')
-
 /* Netlify cache folder */
-const yourFolderNameSpace = 'storage'
-const netlifyCacheFolder = path.join('/opt/build/cache', yourFolderNameSpace)
+let cacheFolder = path.join('/opt/build/cache', 'my-cache-folder')
 
 /* Array of folders to cache */
 const contentsToCache = [
@@ -52,8 +48,13 @@ const contentsToCache = [
   },
 ]
 
-// Run lib
-cacheMeOutside(netlifyCacheFolder, contentsToCache).then((cacheInfo) => {
+/*
+// local cache folder for testing
+cacheFolder = path.resolve('./cache')
+/**/
+
+// Run cacheMeOutside
+cacheMeOutside(cacheFolder, contentsToCache).then((cacheInfo) => {
   console.log('Success! You are ready to rock')
   cacheInfo.forEach((info) => {
     console.log(info.cacheDir)

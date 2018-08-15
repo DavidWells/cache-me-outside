@@ -6,17 +6,70 @@ Caching tool for quicker builds in CI systems
 
 <!-- AUTO-GENERATED-CONTENT:START (TOC) -->
 - [Usage](#usage)
+  * [1. Configure the files you want to cache](#1-configure-the-files-you-want-to-cache)
+  * [2. Add to your build step](#2-add-to-your-build-step)
+- [API](#api)
 - [How it works](#how-it-works)
 <!-- AUTO-GENERATED-CONTENT:END -->
 
 ## Usage
 
-Inside your build scripts:
+
+### 1. Configure the files you want to cache
+
+<!-- AUTO-GENERATED-CONTENT:START (CODE:src=./install-from-cache-example.js&header=/* code from ./install-from-cache-example.js */) -->
+<!-- The below code snippet is automatically added from ./install-from-cache-example.js -->
+```js
+/* code from ./install-from-cache-example.js */
+const path = require('path')
+const cacheMeOutside = require('cache-me-outside')
+
+/* cache destination folder */
+const cacheFolder = path.join('/opt/build/cache', 'storage')
+
+/* Array of folders to cache */
+const contentsToCache = [
+  {
+    contents: path.join(__dirname, 'node_modules'),
+    handleCacheUpdate: 'npm install',
+    shouldCacheUpdate: async (cacheManifest, utils) => {
+      /* Your custom invalidation logic */
+
+      /*
+         - Dates cache last updated
+         - Make remote api request
+         - Diff dependencies files like package.json
+         - Whatever you want
+      */
+
+      const updateCache = true
+      return updateCache // Boolean
+    },
+  },
+  // ... add more folders if you want
+]
+
+// Run cacheMeOutside
+cacheMeOutside(cacheFolder, contentsToCache).then((cacheInfo) => {
+  console.log('Success! You are ready to rock')
+  cacheInfo.forEach((info) => {
+    console.log(info.cacheDir)
+  })
+})
+```
+<!-- AUTO-GENERATED-CONTENT:END -->
+
+### 2. Add to your build step
+
+Now that we have configured what we want to cache, we need to add this to our build step.
+
+Inside `package.json`, or whatever build tool you are using, run the `catch-me-outside` script before your build step.
 
 ```json
 {
   "scripts": {
-    "build": "node ./usage-example.js"
+    "prebuild": "node ./install-from-cache-example.js",
+    "build": "react-scripts build"
   }
 }
 ```
@@ -31,19 +84,18 @@ If any of `shouldCacheUpdate` return true, the cached files are invalidated and 
 
 If you omit `shouldCacheUpdate`, the hash of the folder contents will be used, so if any file changes within the contents you are caching, the `handleCacheUpdate` will run.
 
-<!-- AUTO-GENERATED-CONTENT:START (CODE:src=./usage-example.js&header=/* code from usage-example.js */) -->
-<!-- The below code snippet is automatically added from ./usage-example.js -->
+
+## API
+
+<!-- AUTO-GENERATED-CONTENT:START (CODE:src=./install-from-cache-larger-example.js&header=/* code from install-from-cache-larger-example.js */) -->
+<!-- The below code snippet is automatically added from ./install-from-cache-larger-example.js -->
 ```js
-/* code from usage-example.js */
+/* code from install-from-cache-larger-example.js */
 const path = require('path')
 const cacheMeOutside = require('./lib') // require('cache-me-outside')
 
-/* local cache folder */
-const cacheDir = path.resolve('./cache')
-
 /* Netlify cache folder */
-const yourFolderNameSpace = 'storage'
-const netlifyCacheFolder = path.join('/opt/build/cache', yourFolderNameSpace)
+let cacheFolder = path.join('/opt/build/cache', 'my-cache-folder')
 
 /* Array of folders to cache */
 const contentsToCache = [
@@ -89,8 +141,13 @@ const contentsToCache = [
   },
 ]
 
-// Run lib
-cacheMeOutside(netlifyCacheFolder, contentsToCache).then((cacheInfo) => {
+/*
+// local cache folder for testing
+cacheFolder = path.resolve('./cache')
+/**/
+
+// Run cacheMeOutside
+cacheMeOutside(cacheFolder, contentsToCache).then((cacheInfo) => {
   console.log('Success! You are ready to rock')
   cacheInfo.forEach((info) => {
     console.log(info.cacheDir)
@@ -118,7 +175,6 @@ When the cache is saved it generates a `cache.json` manifest file. This is passe
 }
 ```
 
-
 ## How it works
 
 ```
@@ -128,7 +184,7 @@ When the cache is saved it generates a `cache.json` manifest file. This is passe
                        │                                       │
                        │             npm run build             │
                        │                                       │
-                       │     "node ./build-with-cache.js"      │
+                       │     "node ./cache-me-script.js"       │
                        │                                       │
                        └───────────────────────────────────────┘
                                            │
