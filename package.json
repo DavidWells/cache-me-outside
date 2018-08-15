@@ -10,12 +10,16 @@
     "README.md"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "md-magic --path '**/*.md' --ignore 'node_modules'"
   },
   "author": "David Wells",
   "license": "MIT",
   "dependencies": {
     "is-invalid-path": "^1.0.2",
     "rimraf": "^2.6.2"
+  },
+  "devDependencies": {
+    "markdown-magic": "^0.1.25"
   }
 }

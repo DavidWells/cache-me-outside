@@ -1,28 +1,32 @@
 const path = require('path')
-const cacheMeOutside = require('./lib')
+const cacheMeOutside = require('./lib') // require('cache-me-outside')
 
-// Netlify cache folder
-const yourCustomNameSpace = 'storage'
-const netlifyCacheFolder = path.join('/opt/build/cache', yourCustomNameSpace)
-// const cacheDir = netlifyCacheFolder
+/* local cache folder */
 const cacheDir = path.resolve('./cache')
+
+/* Netlify cache folder */
+const yourFolderNameSpace = 'storage'
+const netlifyCacheFolder = path.join('/opt/build/cache', yourFolderNameSpace)
 
 const contentsToCache = [
   {
     // Directory of files to cache
     contents: path.join(__dirname, 'node_modules'),
     // Command or Function to run on `shouldCacheUpdate = true`
-    handleCacheUpdate: 'npm install && echo "HIIIIIIIII"',
+    handleCacheUpdate: 'npm install',
     // Should cache update? Return true or false
     shouldCacheUpdate: async (data, utils) => {
-      const pkgChanged = await utils.diff(path.join(__dirname, 'package.json'))
-      const lolChanged = await utils.diff(path.join(__dirname, 'lol.json'))
-      return pkgChanged || lolChanged
+      // utils contains helpful functions for diffing
+      const packageJson = path.join(__dirname, 'package.json')
+      const packageJsonChanged = await utils.diff(packageJson)
+      // You can check multiple files or run custom logic
+      return packageJsonChanged
     },
   },
   {
     contents: path.join(__dirname, 'other/node_modules'),
     shouldCacheUpdate: function() {
+      // your custom cache invalidation logic here
       return false
     },
     handleCacheUpdate: 'yarn install'
@@ -36,7 +40,7 @@ const contentsToCache = [
   },
 ]
 
-cacheMeOutside(cacheDir, contentsToCache).then((cacheInfo) => {
+cacheMeOutside(netlifyCacheFolder, contentsToCache).then((cacheInfo) => {
   console.log('Success! You are ready to rock')
   cacheInfo.forEach((info) => {
     console.log(info.cacheDir)
