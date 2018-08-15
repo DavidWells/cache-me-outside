@@ -5,41 +5,38 @@ const cacheMeOutside = require('./lib')
 const yourCustomNameSpace = 'storage'
 const netlifyCacheFolder = path.join('/opt/build/cache', yourCustomNameSpace)
 // const cacheDir = netlifyCacheFolder
-const cacheFolder = path.resolve('./cache')
+const cacheDir = path.resolve('./cache')
 
 const contentsToCache = [
   {
+    // Directory of files to cache
     contents: path.join(__dirname, 'node_modules'),
-    handleCacheUpdate: 'npm install',
-    shouldCacheUpdate: async function(data, utils) {
+    // Command or Function to run on `shouldCacheUpdate = true`
+    handleCacheUpdate: 'npm install && echo "HIIIIIIIII"',
+    // Should cache update? Return true or false
+    shouldCacheUpdate: async (data, utils) => {
       const pkgChanged = await utils.diff(path.join(__dirname, 'package.json'))
       const lolChanged = await utils.diff(path.join(__dirname, 'lol.json'))
-
       return pkgChanged || lolChanged
     },
   },
   {
     contents: path.join(__dirname, 'other/node_modules'),
-    shouldCacheUpdate: function() {
-      const nodeModulesDifferent = null
-      if (nodeModulesDifferent) {
-        return true
-      }
+    handleCacheUpdate: 'npm install',
+    shouldCacheUpdate: (data) => {
+      // console.log('data', data)
       return false
     },
-    invalidateOn: path.join(__dirname, 'other/package.json'),
-    command: 'npm install'
   },
   {
     contents: path.join(__dirname, 'serverless-test/.serverless'),
     shouldCacheUpdate: function() {
-      return false
+      return true
     },
-    invalidateOn: 'serverless.yml',
-    command: 'echo "hi"'
+    handleCacheUpdate: 'echo "hi"'
   }
 ]
 
-cacheMeOutside(contentsToCache, cacheFolder).then(() => {
-  console.log('Success! You are ready to rock')
+cacheMeOutside(cacheDir, contentsToCache).then((cacheInfo) => {
+  console.log('Success! You are ready to rock', cacheInfo)
 })
