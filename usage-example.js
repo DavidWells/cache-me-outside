@@ -13,10 +13,12 @@ const contentsToCache = [
     // Directory of files to cache
     contents: path.join(__dirname, 'node_modules'),
     // Command or Function to run on `shouldCacheUpdate = true`
-    handleCacheUpdate: 'npm install',
-    // Should cache update? Return true or false
-    shouldCacheUpdate: async (data, utils) => {
-      // utils contains helpful functions for diffing
+    handleCacheUpdate: 'npm install && echo "this runs when cache is invalid"',
+    /* shouldCacheUpdate? Returns true or false
+      'cacheManifest' contains useful info for custom invalidation
+      'utils' contains helpful functions for diffing  */
+    shouldCacheUpdate: async (cacheManifest, utils) => {
+      // This example uses changes to package.json to invalid cached 'node_modules' folder
       const packageJson = path.join(__dirname, 'package.json')
       const packageJsonChanged = await utils.diff(packageJson)
       // You can check multiple files or run custom logic
@@ -26,7 +28,7 @@ const contentsToCache = [
   {
     contents: path.join(__dirname, 'other/node_modules'),
     shouldCacheUpdate: function() {
-      // your custom cache invalidation logic here
+      /* your custom cache invalidation logic here */
       return false
     },
     handleCacheUpdate: 'yarn install'

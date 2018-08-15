@@ -50,10 +50,12 @@ const contentsToCache = [
     // Directory of files to cache
     contents: path.join(__dirname, 'node_modules'),
     // Command or Function to run on `shouldCacheUpdate = true`
-    handleCacheUpdate: 'npm install',
-    // Should cache update? Return true or false
-    shouldCacheUpdate: async (data, utils) => {
-      // utils contains helpful functions for diffing
+    handleCacheUpdate: 'npm install && echo "this runs when cache is invalid"',
+    /* shouldCacheUpdate? Returns true or false
+      'cacheManifest' contains useful info for custom invalidation
+      'utils' contains helpful functions for diffing  */
+    shouldCacheUpdate: async (cacheManifest, utils) => {
+      // This example uses changes to package.json to invalid cached 'node_modules' folder
       const packageJson = path.join(__dirname, 'package.json')
       const packageJsonChanged = await utils.diff(packageJson)
       // You can check multiple files or run custom logic
@@ -63,7 +65,7 @@ const contentsToCache = [
   {
     contents: path.join(__dirname, 'other/node_modules'),
     shouldCacheUpdate: function() {
-      // your custom cache invalidation logic here
+      /* your custom cache invalidation logic here */
       return false
     },
     handleCacheUpdate: 'yarn install'
@@ -85,6 +87,25 @@ cacheMeOutside(netlifyCacheFolder, contentsToCache).then((cacheInfo) => {
 })
 ```
 <!-- AUTO-GENERATED-CONTENT:END -->
+
+When the cache is saved it generates a `cache.json` manifest file. This is passed into `shouldCacheUpdate` if you want to use it to invalidate your cache.
+
+```json
+{
+  "createdOn": 1534296638475,
+  "createdOnDate": "Wed, 15 Aug 2018 01:30:38 GMT",
+  "modifiedOn": 1534300695541,
+  "cacheDir": "/Users/davidwells/Netlify/cache-magic/cache/Netlify/cache-magic/serverless-test",
+  "cacheDirContents": "/Users/davidwells/Netlify/cache-magic/cache/Netlify/cache-magic/serverless-test/.serverless",
+  "contents": {
+    "src": "/Users/davidwells/Netlify/cache-magic/serverless-test/.serverless",
+    "hash": "0496d16c0a8b1d43ca2d3c77ca48a8e237fdb625",
+    "files": {
+      "stuff.txt": "11b80f260a5eea9e867a23ab7f96aff77080ff90"
+    }
+  }
+}
+```
 
 
 ## How it works
