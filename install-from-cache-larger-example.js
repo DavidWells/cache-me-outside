@@ -2,8 +2,8 @@ const path = require('path')
 const cacheMeOutside = require('./lib') // require('cache-me-outside')
 
 /* Netlify cache folder */
-let cacheFolder = path.join('/opt/build/cache', 'my-cache-folder')
-
+//let cacheFolder = path.join('/opt/build/cache', 'my-cache-folder')
+let cacheFolder = path.join(__dirname, 'cache')
 /* Array of folders to cache */
 const contentsToCache = [
   {
