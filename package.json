@@ -1,6 +1,6 @@
 {
   "name": "cache-me-outside",
-  "version": "0.0.10",
+  "version": "1.0.0",
   "description": "Caching tool for quicker builds in CI systems",
   "main": "lib/index.js",
   "files": [
