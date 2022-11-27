@@ -26,7 +26,7 @@ const contentsToCache = [
      */
     shouldCacheUpdate: async ({ cacheManifest, actions }) => {
       // This example uses changes to package.json to invalid cached 'node_modules' folder
-      const packageJson = path.join(__dirname, 'package.json')
+      const packageJson = path.join(__dirname, '../package.json')
       const packageJsonChanged = await actions.diff(packageJson)
       // You can check multiple files or run custom logic
       return packageJsonChanged

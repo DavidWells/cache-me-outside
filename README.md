@@ -17,22 +17,24 @@ Caching tool for quicker builds in CI systems
 
 ### 1. Configure the files you want to cache
 
-<!-- AUTO-GENERATED-CONTENT:START (CODE:src=./install-from-cache-example.js&header=/* code from ./install-from-cache-example.js */) -->
-<!-- The below code snippet is automatically added from ./install-from-cache-example.js -->
+<!-- AUTO-GENERATED-CONTENT:START (CODE:src=./examples/install-from-cache-example.js&header=/* code from ./install-from-cache-example.js */) -->
+<!-- The below code snippet is automatically added from ./examples/install-from-cache-example.js -->
 ```js
 /* code from ./install-from-cache-example.js */
 const path = require('path')
-const cacheMeOutside = require('cache-me-outside')
+const cacheMeOutside = require('../lib') // require('cache-me-outside')
 
 /* cache destination folder */
-const cacheFolder = path.join('/opt/build/cache', 'storage')
-
+// const cacheFolder = path.join('/opt/build/cache', 'storage')
+const cacheFolder = path.join(__dirname, '.cache')
 /* Array of folders to cache */
 const contentsToCache = [
   {
-    contents: path.join(__dirname, 'node_modules'),
+    contents: path.join(__dirname, '../node_modules'),
     handleCacheUpdate: 'npm install',
-    shouldCacheUpdate: async (cacheManifest, utils) => {
+    shouldCacheUpdate: async ({ cacheManifest, actions }) => {
+      console.log('cacheManifest', cacheManifest)
+      console.log(actions)
       /* Your custom invalidation logic */
 
       /*
@@ -42,7 +44,11 @@ const contentsToCache = [
          - Whatever you want
       */
 
-      const updateCache = true
+      // This example uses changes to package.json to invalid cached 'node_modules' folder
+      const packageJson = path.join(__dirname, '../package.json')
+      const packageJsonChanged = await actions.diff(packageJson)
+      console.log('packageJsonChanged', packageJsonChanged)
+      const updateCache = packageJsonChanged
       return updateCache // Boolean
     },
   },
@@ -87,16 +93,16 @@ If you omit `shouldCacheUpdate`, the hash of the folder contents will be used, s
 
 ## API
 
-<!-- AUTO-GENERATED-CONTENT:START (CODE:src=./install-from-cache-larger-example.js&header=/* code from install-from-cache-larger-example.js */) -->
-<!-- The below code snippet is automatically added from ./install-from-cache-larger-example.js -->
+<!-- AUTO-GENERATED-CONTENT:START (CODE:src=./examples/install-from-cache-multiple.js&header=/* code from install-from-cache-multiple.js */) -->
+<!-- The below code snippet is automatically added from ./examples/install-from-cache-multiple.js -->
 ```js
-/* code from install-from-cache-larger-example.js */
+/* code from install-from-cache-multiple.js */
 const path = require('path')
-const cacheMeOutside = require('./lib') // require('cache-me-outside')
+const cacheMeOutside = require('../lib') // require('cache-me-outside')
 
 /* Netlify cache folder */
-let cacheFolder = path.join('/opt/build/cache', 'my-cache-folder')
-
+//let cacheFolder = path.join('/opt/build/cache', 'my-cache-folder')
+let cacheFolder = path.join(__dirname, '.cache')
 /* Array of folders to cache */
 const contentsToCache = [
   {
@@ -104,7 +110,7 @@ const contentsToCache = [
      * Directory of files to cache
      * @type {String}
      */
-    contents: path.join(__dirname, 'node_modules'),
+    contents: path.join(__dirname, '../node_modules'),
     /**
      * Command or Function to run on `shouldCacheUpdate = true`
      * @type {String|Function}
@@ -112,20 +118,21 @@ const contentsToCache = [
     handleCacheUpdate: 'npm install && echo "this runs when cache is invalid"',
     /**
      * Sets whether or not cache should get updated
-     * @param  {object}  cacheManifest contains useful info for custom invalidation
-     * @param  {object}  utils         contains helpful functions for diffing
-     * @return {Boolean}              Returns true or false
+     * @param  {object}  api
+     * @param  {object}  api.cacheManifest - contains useful info for custom invalidation
+     * @param  {object}  api.actions       - contains helpful functions for diffing
+     * @return {Boolean} Returns true or false
      */
-    shouldCacheUpdate: async (cacheManifest, utils) => {
+    shouldCacheUpdate: async ({ cacheManifest, actions }) => {
       // This example uses changes to package.json to invalid cached 'node_modules' folder
-      const packageJson = path.join(__dirname, 'package.json')
-      const packageJsonChanged = await utils.diff(packageJson)
+      const packageJson = path.join(__dirname, '../package.json')
+      const packageJsonChanged = await actions.diff(packageJson)
       // You can check multiple files or run custom logic
       return packageJsonChanged
     },
   },
   {
-    contents: path.join(__dirname, 'other/node_modules'),
+    contents: path.join(__dirname, '../other/node_modules'),
     shouldCacheUpdate: function() {
       /* your custom cache invalidation logic here */
       return false
@@ -133,7 +140,7 @@ const contentsToCache = [
     handleCacheUpdate: 'yarn install'
   },
   {
-    contents: path.join(__dirname, 'serverless-test/.serverless'),
+    contents: path.join(__dirname, '../serverless-test/.serverless'),
     handleCacheUpdate: () => {
       console.log('run my custom stuff here')
     }

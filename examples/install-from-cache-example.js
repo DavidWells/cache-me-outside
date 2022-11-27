@@ -11,7 +11,7 @@ const contentsToCache = [
     handleCacheUpdate: 'npm install',
     shouldCacheUpdate: async ({ cacheManifest, actions }) => {
       console.log('cacheManifest', cacheManifest)
-      console.log(utils)
+      console.log(actions)
       /* Your custom invalidation logic */
 
       /*
@@ -23,7 +23,7 @@ const contentsToCache = [
 
       // This example uses changes to package.json to invalid cached 'node_modules' folder
       const packageJson = path.join(__dirname, '../package.json')
-      const packageJsonChanged = await utils.diff(packageJson)
+      const packageJsonChanged = await actions.diff(packageJson)
       console.log('packageJsonChanged', packageJsonChanged)
       const updateCache = packageJsonChanged
       return updateCache // Boolean
